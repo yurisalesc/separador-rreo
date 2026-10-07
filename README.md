@@ -132,8 +132,8 @@ separador-rreo /caminho/publicado.pdf --municipios "Bodó" --saida /tmp/rreo_out
 
 ## Autores
 
-- **Ana Cláudia Medeiros de Carvalho** (autora principal) — anaclaudiaengmat@gmail.com
-- Yuri Sales — yuri.sales@protonmail.com
+- **Ana Cláudia Medeiros de Carvalho** — anaclaudiaengmat@gmail.com
+- **Yuri Sales** — yuri.sales@protonmail.com
 
 ## Licença
 
