@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "Yuri Sales", email = "yurisalesc@users.noreply.github.com" },
+  { name = "Ana Cláudia Medeiros de Carvalho", email = "anaclaudiaengmat@gmail.com" },
+  { name = "Yuri Sales", email = "yuri.sales@protonmail.com" },
 ]
 keywords = [
   "rreo",
