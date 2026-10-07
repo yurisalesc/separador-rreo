@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "separador-rreo"
+version = "0.1.0"
+description = "Separa anexos RREO de diários oficiais FEMURN em PDFs por município, com planilha de conferência."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Yuri Sales", email = "yurisalesc@users.noreply.github.com" },
+]
+keywords = [
+  "rreo",
+  "femurn",
+  "lrf",
+  "pdf",
+  "contabilidade-publica",
+  "municipio",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Legal Industry",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business",
+  "Topic :: Text Processing :: General",
+]
+dependencies = [
+  "pymupdf>=1.24.0",
+  "openpyxl>=3.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yurisalesc/separador-rreo"
+Issues = "https://github.com/yurisalesc/separador-rreo/issues"
+
+[project.scripts]
+separador-rreo = "separador_rreo.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/separador_rreo"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/README.md",
+  "/LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
