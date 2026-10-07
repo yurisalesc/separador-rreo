@@ -8,7 +8,7 @@ import pytest
 
 from separador_rreo import SeparadorRreo
 
-PDF = Path("/home/yuriscosta/Downloads/publicado_117684.pdf")
+PDF = Path("fixtures/publicado_117684.pdf")
 
 
 @pytest.mark.skipif(not PDF.is_file(), reason="PDF de teste não encontrado")

@@ -130,9 +130,31 @@ Para um teste de integração com um diário real:
 separador-rreo /caminho/publicado.pdf --municipios "Bodó" --saida /tmp/rreo_out
 ```
 
+## Publicação (PyPI)
+
+### Local (com token em `~/.pypirc`)
+
+```bash
+cp .pypirc.example ~/.pypirc   # edite e cole os tokens
+chmod 600 ~/.pypirc
+
+./scripts/release.sh test      # ensaio no TestPyPI
+./scripts/release.sh pypi      # publicação oficial
+```
+
+### GitHub Actions
+
+1. Em **Settings → Secrets and variables → Actions**, crie:
+   - `PYPI_API_TOKEN` — token do PyPI
+   - `TEST_PYPI_API_TOKEN` — token do TestPyPI
+2. Publique um **Release** no GitHub (tag `v0.1.0`, etc.) → workflow **Publish to PyPI**
+3. Ou rode o workflow manualmente (**Actions → Publish to PyPI → Run workflow**) escolhendo `testpypi` ou `pypi`
+
+Antes de cada release, atualize `version` em `pyproject.toml`.
+
 ## Autores
 
-- **Ana Cláudia Medeiros de Carvalho** — anaclaudiaengmat@gmail.com
+- **Ana Cláudia Medeiros de Carvalho** (autora principal) — anaclaudiaengmat@gmail.com
 - **Yuri Sales** — yuri.sales@protonmail.com
 
 ## Licença
