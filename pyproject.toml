@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "separador-rreo"
-version = "0.1.0"
+version = "0.2.0"
 description = "Separa anexos RREO de diários oficiais FEMURN em PDFs por município, com planilha de conferência."
 readme = "README.md"
 requires-python = ">=3.10"
