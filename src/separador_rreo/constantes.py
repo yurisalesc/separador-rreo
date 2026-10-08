@@ -1,11 +1,8 @@
-"""Constantes do domínio RREO / FEMURN."""
+"""Constantes auxiliares do domínio RREO / FEMURN."""
 
 from __future__ import annotations
 
-# Anexos RREO normalmente publicados nos diários FEMURN.
-ANEXOS_PADRAO: tuple[int, ...] = (1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14)
-
-ROMANOS: dict[str, int] = {
+NUMEROS_ROMANOS: dict[str, int] = {
     "I": 1,
     "II": 2,
     "III": 3,

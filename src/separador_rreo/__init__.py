@@ -1,18 +1,32 @@
 """Separador RREO — extrai anexos RREO de diários oficiais FEMURN."""
 
-from separador_rreo.exporter import ExportResult, RreoExporter
-from separador_rreo.models import AnalysisResult, Finding
-from separador_rreo.pipeline import SeparadorRreo, separar
-from separador_rreo.recognition import AnexoRecognizer
+from separador_rreo.analisador import AnalisadorRreo
+from separador_rreo.aplicacao import SeparadorRreo, separar_rreo
+from separador_rreo.enumeracoes import (
+    AnexoRreo,
+    SituacaoConferencia,
+    SituacaoOcorrencia,
+)
+from separador_rreo.exportacao import ExportadorRreo
+from separador_rreo.modelos import (
+    Ocorrencia,
+    ResultadoAnalise,
+    ResultadoExportacao,
+)
+from separador_rreo.reconhecimento import ReconhecedorTituloRreo
 
 __all__ = [
-    "AnalysisResult",
-    "AnexoRecognizer",
-    "ExportResult",
-    "Finding",
-    "RreoExporter",
+    "AnalisadorRreo",
+    "AnexoRreo",
+    "ExportadorRreo",
+    "Ocorrencia",
+    "ReconhecedorTituloRreo",
+    "ResultadoAnalise",
+    "ResultadoExportacao",
     "SeparadorRreo",
-    "separar",
+    "SituacaoConferencia",
+    "SituacaoOcorrencia",
+    "separar_rreo",
     "__version__",
 ]
 

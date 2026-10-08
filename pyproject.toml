@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
   { name = "Ana Cláudia Medeiros de Carvalho", email = "anaclaudiaengmat@gmail.com" },
-  { name = "Yuri Sales", email = "yuri.sales@protonmail.com" },
+  { name = "Yuri Henrique Sales da Costa", email = "yuri.sales@protonmail.com" },
 ]
 keywords = [
   "rreo",
@@ -44,6 +44,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0",
+  "ruff>=0.14",
 ]
 
 [project.urls]
@@ -67,3 +68,10 @@ include = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

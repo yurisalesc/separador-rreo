@@ -72,45 +72,104 @@ A coluna **Situacao** da planilha indica:
 
 ## Uso como biblioteca
 
+### Separação completa
+
 ```python
-from separador_rreo import SeparadorRreo, separar
+from separador_rreo import separar_rreo
 
-# Atalho completo (analisa + exporta)
-resultado = separar(
+resultado = separar_rreo(
     "diario.pdf",
-    municipalities=["Bodó", "Angicos"],
-    destination="saida_rreo",
-)
-print(resultado.pdf_count, resultado.spreadsheet, resultado.zip_path)
-
-# Ou em duas etapas / com mais controle
-app = SeparadorRreo()
-analysis, export = app.run(
-    "diario.pdf",
-    municipalities=["Bodó"],
-    destination="saida_rreo",
+    municipios=["Bodó", "Angicos"],
+    destino="saida_rreo",
 )
 
-for finding in analysis.for_municipality("Bodó"):
-    print(finding.annex, finding.page_start, finding.page_end, finding.status)
+print(resultado.quantidade_pdfs)
+print(resultado.planilha)
+print(resultado.arquivo_zip)
 ```
 
-### Extensão (Open/Closed)
-
-Você pode acrescentar heurísticas de reconhecimento sem alterar o analisador:
+### Análise e exportação separadas
 
 ```python
-from separador_rreo import AnexoRecognizer, SeparadorRreo
-from separador_rreo.analyzer import RreoAnalyzer
+from separador_rreo import SeparadorRreo
 
-def minha_heuristica(linha: str) -> int | None:
-    if "MEU PADRAO DE ANEXO 9" in linha.upper():
-        return 9
+separador = SeparadorRreo()
+analise, exportacao = separador.executar(
+    "diario.pdf",
+    municipios=["Bodó"],
+    destino="saida_rreo",
+)
+
+for ocorrencia in analise.do_municipio("Bodó"):
+    print(
+        ocorrencia.anexo,
+        ocorrencia.pagina_inicial,
+        ocorrencia.pagina_final,
+        ocorrencia.situacao.value,
+    )
+```
+
+### Tipos do domínio
+
+Os anexos e as situações são representados por enums. Isso reduz erros de
+digitação e facilita comparações:
+
+```python
+from separador_rreo import AnexoRreo, SituacaoOcorrencia
+
+if ocorrencia.anexo is AnexoRreo.BALANCO_ORCAMENTARIO:
+    print("Balanço orçamentário localizado")
+
+if ocorrencia.situacao is SituacaoOcorrencia.VERIFICAR_LIMITE_FINAL:
+    print("É necessário conferir manualmente o fim do recorte")
+```
+
+### Ensinar um título novo ao reconhecedor
+
+O pacote já conhece vários jeitos de um anexo RREO aparecer no diário
+(por exemplo `ANEXO 01_RREO` ou `RREO - 4º BIM - BALANÇO ORÇAMENTÁRIO`).
+
+Se um município publicar com um texto de título **diferente**, o pacote pode
+não achar esse anexo. Nesse caso você pode passar uma função pequena que
+olha cada linha do PDF e devolve o número do anexo (ou `None` se a linha
+não for um título):
+
+```python
+from separador_rreo import (
+    AnalisadorRreo,
+    AnexoRreo,
+    ReconhecedorTituloRreo,
+    SeparadorRreo,
+)
+
+def reconhecer_titulo_do_meu_municipio(linha: str) -> int | None:
+    # Exemplo: se a linha for um título do Anexo 9, retorne 9
+    if "DEMONSTRATIVO X DO ANEXO 9" in linha.upper():
+        return AnexoRreo.RECEITAS_OPERACOES_CREDITO
     return None
 
-recognizer = AnexoRecognizer(heuristics=[minha_heuristica])
-app = SeparadorRreo(analyzer=RreoAnalyzer(recognizer=recognizer))
+reconhecedor = ReconhecedorTituloRreo(
+    regras_adicionais=[reconhecer_titulo_do_meu_municipio]
+)
+separador = SeparadorRreo(
+    analisador=AnalisadorRreo(reconhecedor=reconhecedor)
+)
+analise, exportacao = separador.executar(
+    "diario.pdf", ["Meu Município"], "saida_rreo"
+)
 ```
+
+As regras adicionais são executadas junto com as regras já fornecidas pelo
+pacote. Assim você amplia o reconhecimento sem alterar o código interno.
+
+## Organização do código
+
+- `analisador.py` localiza municípios, títulos e limites dos anexos;
+- `reconhecimento.py` contém as regras de reconhecimento de títulos;
+- `exportacao.py` coordena a geração dos artefatos;
+- `planilha.py`, `compactacao.py` e `agrupamento.py` cuidam de tarefas específicas;
+- `documento_pdf.py` isola a dependência do PyMuPDF;
+- `contratos.py`, `modelos.py` e `enumeracoes.py` definem os contratos e o domínio.
 
 ## Requisitos
 
@@ -122,40 +181,15 @@ app = SeparadorRreo(analyzer=RreoAnalyzer(recognizer=recognizer))
 
 ```bash
 pytest
+ruff check src tests
 ```
 
-Para um teste de integração com um diário real:
-
-```bash
-separador-rreo /caminho/publicado.pdf --municipios "Bodó" --saida /tmp/rreo_out
-```
-
-## Publicação (PyPI)
-
-### Local (com token em `~/.pypirc`)
-
-```bash
-cp .pypirc.example ~/.pypirc   # edite e cole os tokens
-chmod 600 ~/.pypirc
-
-./scripts/release.sh test      # ensaio no TestPyPI
-./scripts/release.sh pypi      # publicação oficial
-```
-
-### GitHub Actions
-
-1. Em **Settings → Secrets and variables → Actions**, crie:
-   - `PYPI_API_TOKEN` — token do PyPI
-   - `TEST_PYPI_API_TOKEN` — token do TestPyPI
-2. Publique um **Release** no GitHub (tag `v0.1.0`, etc.) → workflow **Publish to PyPI**
-3. Ou rode o workflow manualmente (**Actions → Publish to PyPI → Run workflow**) escolhendo `testpypi` ou `pypi`
-
-Antes de cada release, atualize `version` em `pyproject.toml`.
+Há um diário de exemplo em `tests/fixtures/publicado_117684.pdf` usado no teste de integração.
 
 ## Autores
 
-- **Ana Cláudia Medeiros de Carvalho** (autora principal) — anaclaudiaengmat@gmail.com
-- **Yuri Sales** — yuri.sales@protonmail.com
+- **Ana Cláudia Medeiros de Carvalho** — anaclaudiaengmat@gmail.com
+- **Yuri Henrique Sales da Costa** — yuri.sales@protonmail.com
 
 ## Licença
 
