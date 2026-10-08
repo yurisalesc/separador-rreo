@@ -50,6 +50,7 @@ class AnalisadorRreo:
         secoes.sort(key=lambda item: item.deslocamento)
         codigos.sort(key=lambda item: item.inicio)
         titulos.sort(key=lambda item: item.deslocamento)
+        titulos = self._descartar_cabecalhos_de_continuacao(titulos, secoes, codigos)
 
         if not secoes:
             raise ValueError(
@@ -142,6 +143,48 @@ class AnalisadorRreo:
             "RELATORIO RESUMIDO" in normalizado
             and "EXECUCAO ORCAMENTARIA" in normalizado
         )
+
+    @staticmethod
+    def _descartar_cabecalhos_de_continuacao(
+        titulos: list[TituloLocalizado],
+        secoes: list[MarcadorSecao],
+        codigos: list[MarcadorCodigo],
+    ) -> list[TituloLocalizado]:
+        """Ignora cabeçalhos repetidos do mesmo anexo antes do código identificador."""
+        if not titulos:
+            return []
+
+        inicio_secoes = [item.deslocamento for item in secoes]
+        inicio_codigos = [item.inicio for item in codigos]
+        filtrados: list[TituloLocalizado] = []
+
+        for titulo in titulos:
+            if not filtrados:
+                filtrados.append(titulo)
+                continue
+
+            anterior = filtrados[-1]
+            if anterior.anexo != titulo.anexo:
+                filtrados.append(titulo)
+                continue
+
+            secao_atual = bisect.bisect_right(inicio_secoes, titulo.deslocamento) - 1
+            secao_anterior = (
+                bisect.bisect_right(inicio_secoes, anterior.deslocamento) - 1
+            )
+            if secao_atual != secao_anterior:
+                filtrados.append(titulo)
+                continue
+
+            indice_codigo = bisect.bisect_right(inicio_codigos, anterior.deslocamento)
+            if (
+                indice_codigo < len(codigos)
+                and codigos[indice_codigo].inicio < titulo.deslocamento
+            ):
+                filtrados.append(titulo)
+                continue
+
+        return filtrados
 
     @staticmethod
     def _localizar_ocorrencias(

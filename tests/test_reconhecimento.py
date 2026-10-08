@@ -46,6 +46,25 @@ def test_regra_adicional_preserva_regras_padrao():
     assert reconhecedor.reconhecer("ANEXO 01_RREO") == AnexoRreo.BALANCO_ORCAMENTARIO
 
 
+def test_ignora_anexo_de_gestao_fiscal():
+    reconhecedor = ReconhecedorTituloRreo()
+    assert (
+        reconhecedor.reconhecer(
+            "ANEXO 06_RGF_DEMONSTRATIVO SIMPLIFICADO DO RELATÓRIO DE GESTÃO FISCAL",
+            contexto_rreo=True,
+        )
+        is None
+    )
+
+
+def test_reconhece_despesas_por_funcao_no_cabecalho_do_quarto_bimestre():
+    reconhecedor = ReconhecedorTituloRreo()
+    assert (
+        reconhecedor.reconhecer("RREO - IV BIM - DEMONSTRATIVO DAS DESPESAS POR FUNÇÃO")
+        == AnexoRreo.DESPESAS_POR_FUNCAO
+    )
+
+
 def test_filtra_anexos_permitidos():
     reconhecedor = ReconhecedorTituloRreo(
         anexos_permitidos=[AnexoRreo.BALANCO_ORCAMENTARIO]

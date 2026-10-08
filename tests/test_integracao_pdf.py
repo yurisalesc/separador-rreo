@@ -26,7 +26,8 @@ def test_analisa_diario_real(tmp_path: Path):
     assert analise.quantidade_paginas == 586
     assert {
         municipio: [
-            (item.anexo, item.pagina_inicial, item.pagina_final) for item in ocorrencias
+            (int(item.anexo), item.pagina_inicial, item.pagina_final)
+            for item in ocorrencias
         ]
         for municipio, ocorrencias in analise.ocorrencias_por_municipio.items()
     } == {
@@ -38,7 +39,9 @@ def test_analisa_diario_real(tmp_path: Path):
             (1, 379, 386),
             (1, 386, 388),
             (3, 388, 389),
+            (2, 389, 391),
             (13, 391, 392),
+            (12, 392, 394),
             (7, 394, 395),
         ],
         "ANGICOS": [

@@ -81,6 +81,12 @@ def _numero_do_anexo(correspondencia: re.Match[str]) -> int:
     return NUMEROS_ROMANOS[correspondencia.group("romano")]
 
 
+def _parece_relatorio_gestao_fiscal(texto: str) -> bool:
+    """RGF não deve ser confundido com anexo RREO, mesmo em páginas mistas."""
+    compacto = normalizar(texto).replace("_", " ")
+    return "GESTAO FISCAL" in compacto or re.search(r"\bRGF\b", compacto) is not None
+
+
 class RegraAnexoExplicito:
     """Reconhece títulos no formato `ANEXO 01_RREO`."""
 
@@ -239,6 +245,8 @@ class ReconhecedorTituloRreo:
     def reconhecer(
         self, linha: str, *, contexto_rreo: bool = False
     ) -> AnexoRreo | None:
+        if _parece_relatorio_gestao_fiscal(linha):
+            return None
         for regra in self._regras:
             numero = regra.reconhecer(linha, contexto_rreo=contexto_rreo)
             if numero is None:
