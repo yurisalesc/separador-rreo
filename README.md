@@ -1,6 +1,9 @@
 # separador-rreo
 
-Biblioteca e CLI em Python para **separar anexos RREO** publicados em diários oficiais da **FEMURN** (Federação dos Municípios do Rio Grande do Norte).
+[![PyPI](https://img.shields.io/pypi/v/separador-rreo?label=PyPI&color=3775A9)](https://pypi.org/project/separador-rreo/) [![Python](https://img.shields.io/badge/Python-%3E%3D%203.10-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![CI](https://github.com/yurisalesc/separador-rreo/actions/workflows/ci.yml/badge.svg)](https://github.com/yurisalesc/separador-rreo/actions/workflows/ci.yml) [![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green.svg)](LICENSE) [![Status](https://img.shields.io/badge/status-beta-orange.svg)](https://pypi.org/project/separador-rreo/)
+
+Biblioteca e CLI em Python para **separar anexos RREO** publicados em diários
+oficiais da **FEMURN** (Federação dos Municípios do Rio Grande do Norte).
 
 A partir de um PDF do diário com texto selecionável, o pacote:
 
