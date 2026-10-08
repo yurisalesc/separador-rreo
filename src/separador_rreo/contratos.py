@@ -35,7 +35,7 @@ class FabricaDocumentoPdf(Protocol):
 class ReconhecedorTitulo(Protocol):
     """Reconhece o anexo representado por uma linha de título."""
 
-    def reconhecer(self, linha: str) -> int | None: ...
+    def reconhecer(self, linha: str, *, contexto_rreo: bool = False) -> int | None: ...
 
 
 class Analisador(Protocol):

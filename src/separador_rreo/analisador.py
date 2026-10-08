@@ -96,19 +96,52 @@ class AnalisadorRreo:
                 )
             )
 
+        linhas = texto.splitlines(keepends=True)
+        contexto_rreo = self._pagina_contem_rreo(texto)
+        anexos_na_pagina: set[int] = set()
         cursor = 0
-        for linha in texto.splitlines(keepends=True):
-            anexo = self._reconhecedor.reconhecer(linha)
-            if anexo is not None:
+        for indice_linha, linha in enumerate(linhas):
+            anexo, titulo_original = self._reconhecer_titulo(
+                linhas, indice_linha, contexto_rreo
+            )
+            if anexo is not None and int(anexo) not in anexos_na_pagina:
                 titulos.append(
                     TituloLocalizado(
                         deslocamento=posicao + cursor,
                         pagina=indice_pagina + 1,
                         anexo=anexo,
-                        titulo_original=linha.strip(),
+                        titulo_original=titulo_original,
                     )
                 )
+                anexos_na_pagina.add(int(anexo))
             cursor += len(linha)
+
+    def _reconhecer_titulo(
+        self,
+        linhas: list[str],
+        indice_linha: int,
+        contexto_rreo: bool,
+    ) -> tuple[int | None, str]:
+        """Tenta reconhecer o título na linha atual e em janelas de até três linhas."""
+        for tamanho in (1, 2, 3):
+            trecho = linhas[indice_linha : indice_linha + tamanho]
+            if len(trecho) < tamanho:
+                break
+            titulo = " ".join(linha.strip() for linha in trecho if linha.strip())
+            if not titulo:
+                continue
+            anexo = self._reconhecedor.reconhecer(titulo, contexto_rreo=contexto_rreo)
+            if anexo is not None:
+                return anexo, titulo
+        return None, linhas[indice_linha].strip()
+
+    @staticmethod
+    def _pagina_contem_rreo(texto: str) -> bool:
+        normalizado = normalizar(texto)
+        return "RREO" in normalizado or (
+            "RELATORIO RESUMIDO" in normalizado
+            and "EXECUCAO ORCAMENTARIA" in normalizado
+        )
 
     @staticmethod
     def _localizar_ocorrencias(
